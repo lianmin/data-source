@@ -1,0 +1,50 @@
+{
+  "name": "@xtree/data-source",
+  "version": "0.1.0",
+  "description": "组件功能描述",
+  "files": [
+    "esm",
+    "cjs",
+    "es2017",
+    "dist",
+    "build"
+  ],
+  "module": "esm/index.js",
+  "exports": {
+    ".": {
+      "import": "./esm/index.js",
+      "es2017": "./es2017/index.js"
+    },
+    "./*": "./*"
+  },
+  "sideEffects": [
+    "dist/*"
+  ],
+  "scripts": {
+    "start": "ice-pkg start",
+    "build": "ice-pkg build",
+    "prepublishOnly": "npm run build",
+    "lint": "f2elint scan",
+    "lint:fix": "f2elint fix"
+  },
+  "keywords": [
+    "ice",
+    "web",
+    "library"
+  ],
+  "devDependencies": {
+    "@ice/pkg": "^1.0.0",
+    "@iceworks/spec": "^1.0.0",
+    "f2elint": "^2.2.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT",
+  "husky": {
+    "hooks": {
+      "pre-commit": "f2elint commit-file-scan",
+      "commit-msg": "f2elint commit-msg-scan"
+    }
+  }
+}
