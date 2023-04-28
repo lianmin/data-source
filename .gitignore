@@ -4,16 +4,17 @@
 node_modules/
 
 # production
-.docusaurus/
-build/
-dist/
 tmp/
 cjs/
 esm/
 es2017/
 
+coverage/
+
 # misc
 .idea/
+.vsc/
+.vscode/
 .happypack
 .DS_Store
 *.swp

@@ -1,50 +1,59 @@
 {
   "name": "@xtree/data-source",
   "version": "0.1.0",
-  "description": "组件功能描述",
+  "description": "data source 树状结构管理",
   "files": [
     "esm",
-    "cjs",
     "es2017",
-    "dist",
-    "build"
+    "cjs",
+    "dist"
   ],
-  "module": "esm/index.js",
+  "main": "es2017/index.js",
+  "module": "es2017/index.js",
+  "types": "es2017/index.d.ts",
   "exports": {
     ".": {
-      "import": "./esm/index.js",
-      "es2017": "./es2017/index.js"
+      "es2017": {
+        "types": "./es2017/index.d.ts",
+        "default": "./es2017/index.js"
+      },
+      "default": {
+        "types": "./es2017/index.d.ts",
+        "default": "./es2017/index.js"
+      }
     },
     "./*": "./*"
   },
-  "sideEffects": [
-    "dist/*"
-  ],
+  "sideEffects": false,
   "scripts": {
     "start": "ice-pkg start",
     "build": "ice-pkg build",
     "prepublishOnly": "npm run build",
-    "lint": "f2elint scan",
-    "lint:fix": "f2elint fix"
+    "eslint": "eslint --cache --ext .js,.jsx,.ts,.tsx ./",
+    "eslint:fix": "npm run eslint -- --fix",
+    "test": "jest"
   },
   "keywords": [
-    "ice",
-    "web",
+    "icepkg",
+    "js",
+    "node",
     "library"
   ],
+  "dependencies": {
+    "@swc/helpers": "^0.4.14"
+  },
   "devDependencies": {
+    "@applint/spec": "^1.2.3",
     "@ice/pkg": "^1.0.0",
-    "@iceworks/spec": "^1.0.0",
-    "f2elint": "^2.2.1"
+    "@types/jest": "^29.5.1",
+    "eslint": "8.0.0",
+    "jest": "^29.5.0",
+    "jest-html-reporter": "^3.8.0",
+    "prettier": "^2.8.8",
+    "ts-jest": "^29.1.0"
   },
   "publishConfig": {
-    "access": "public"
+    "registry": "https://registry.npm.alibaba-inc.com"
   },
-  "license": "MIT",
-  "husky": {
-    "hooks": {
-      "pre-commit": "f2elint commit-file-scan",
-      "commit-msg": "f2elint commit-msg-scan"
-    }
-  }
+  "license": "MIT"
 }

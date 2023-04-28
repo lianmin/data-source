@@ -1,0 +1,5 @@
+node_modules
+.vscode
+.idea
+es2017
+esm
