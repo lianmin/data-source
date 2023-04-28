@@ -17,7 +17,7 @@ describe('遍历', () => {
   test('获取一级节点', () => {
     const arr: any = [];
     dsTree.traverse((node) => {
-      if (dsTree.depth(node) === 2) {
+      if (dsTree.depth(node) === 1) {
         arr.push(node);
       }
     });
