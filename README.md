@@ -1,5 +1,9 @@
 # @xtree/data-source
 
+![](https://img.shields.io/npm/v/@xtree/data-source)
+![](https://img.shields.io/codecov/c/github/lianmin/data-source)
+![](https://img.shields.io/github/license/lianmin/data-source)
+
 JS 中常用语如组件 DataSource 的树状结构数组的常用处理方法。如添加、删除子树，查找、遍历。
 
 ## 安装
