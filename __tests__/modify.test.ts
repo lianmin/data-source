@@ -79,6 +79,7 @@ describe('查找和遍历', () => {
         name: '新城市',
       },
       '33',
+      'leading',
     );
 
     const newCities = ds.children('33');
@@ -107,7 +108,6 @@ describe('查找和遍历', () => {
         name: '新城市',
       },
       '33',
-      'trailing',
     );
 
     const newCities = ds.children('33');

@@ -1,6 +1,8 @@
 import Tree, { TreeNode } from '@xtree/tree';
 import { IDataItem, IDataSource } from './typings';
 
+const isNil = (value: any) => value == null;
+
 interface DataSourceConfig {
   /**
    * 自定义的 value 属性名
@@ -19,9 +21,9 @@ type TraverseCallbackFn<T> = (
 ) => void;
 type PredicateFn<T> = (data: T, depth: number) => boolean;
 
-export default class DataSource<T extends { [key: string]: any }> {
-  private tree = new Tree();
-  private root = this.tree.root;
+export default class DataSource<T = IDataItem> {
+  private tree: Tree = new Tree();
+  private root: TreeNode = this.tree.root;
   private readonly valuePropName: string = 'value';
   private readonly childrenPropName: string = 'children';
 
@@ -65,7 +67,7 @@ export default class DataSource<T extends { [key: string]: any }> {
    * @param value
    */
   depth(value?: any) {
-    if (!value) {
+    if (isNil(value)) {
       return 0;
     }
 
@@ -86,7 +88,7 @@ export default class DataSource<T extends { [key: string]: any }> {
     nodes.forEach((node) => this.tree.insertChild(node, this.root, 'trailing'));
   }
 
-  private toDataItem(item: T) {
+  private toDataItem(item: T | any) {
     if (typeof item?.[this.valuePropName] === 'undefined') {
       return {};
     }
@@ -110,6 +112,7 @@ export default class DataSource<T extends { [key: string]: any }> {
   /**
    * 遍历整个树节点
    * @param callback
+   * @param first
    */
   traverse(callback: TraverseCallbackFn<T>, first?: 'depth' | 'breadth') {
     this.tree.traverse((node: TreeNode, cancel) => {
@@ -124,7 +127,7 @@ export default class DataSource<T extends { [key: string]: any }> {
    * @param value
    */
   find(value: PredicateFn<T> | any): T | undefined {
-    if (!value) {
+    if (isNil(value)) {
       return undefined;
     }
 
@@ -160,7 +163,7 @@ export default class DataSource<T extends { [key: string]: any }> {
    * @param pos
    */
   siblings(value: any, pos: 'left' | 'right' | 'all' = 'all'): T[] {
-    if (!value) {
+    if (isNil(value)) {
       return [];
     }
 
@@ -175,7 +178,7 @@ export default class DataSource<T extends { [key: string]: any }> {
    * @param value
    */
   children(value?: any): T[] | undefined {
-    let node = !value ? this.root : this.tree.find(value);
+    let node = isNil(value) ? this.root : this.tree.find(value);
 
     if (!node) {
       return undefined;
@@ -189,7 +192,7 @@ export default class DataSource<T extends { [key: string]: any }> {
    * @param value
    */
   parents(value: any): T[] {
-    if (!value) {
+    if (isNil(value)) {
       return [];
     }
 
@@ -214,7 +217,7 @@ export default class DataSource<T extends { [key: string]: any }> {
   insertChild(
     data: T,
     parentValue?: any,
-    pos: 'leading' | 'trailing' = 'leading',
+    pos: 'leading' | 'trailing' = 'trailing',
   ): boolean {
     const parentNode = parentValue ? this.tree.find(parentValue) : this.root;
 
@@ -285,8 +288,7 @@ export default class DataSource<T extends { [key: string]: any }> {
    * @param value
    */
   remove(value: any): boolean {
-    // todo: isNil
-    if (!value) {
+    if (isNil(value)) {
       return false;
     }
 
