@@ -1,19 +1,25 @@
 # @xtree/data-source
 
-JS 中树状结构数组的常用处理方法。如添加、删除子树，查找、遍历(先序、后序、层级)。
+JS 中常用语如组件 DataSource 的树状结构数组的常用处理方法。如添加、删除子树，查找、遍历。
 
-## Install
+## 安装
 
 ```bash
 $ npm i @xtree/data-source --save
 ```
 
-## Usage
+## 示例
 
 ```js
 import DataSource from '@xtree/data-source';
 
-const ds = new DataSource([]);
+const ds = new DataSource();
+ds.parse([
+  {
+    label: '标签',
+    value: 1,
+  },
+]);
 
 ds.isEmpty();
 ds.find();
@@ -26,6 +32,20 @@ ds.firstLeaf();
 ds.filter();
 
 ds.toData();
+```
+
+## 使用
+
+推荐(默认支持)的数据格式：
+
+```typescript
+type DataItem = {
+  //  节点值，推荐使用 string/number 并且需要保持在树中值唯一
+  value: any;
+  children?: DataItem[];
+  // 其他
+  [key: string]: any;
+};
 ```
 
 推荐使用的数据格式
@@ -46,6 +66,6 @@ const data = [
 ];
 ```
 
-几个约定
+### 几个约定
 
 - 默认 value/id 是全局唯一的, 否则在遍历，查找等场景可能返回结果异常

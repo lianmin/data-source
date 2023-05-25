@@ -1,17 +1,19 @@
 {
   "compilerOptions": {
-    "module": "ESNext",
-    "target": "ESNext",
+    "module": "commonjs",
+    "target": "es6",
+    "jsx": "preserve",
     "moduleResolution": "node",
-    "lib": ["ESNext"],
+    "lib": ["ES2017"],
     "allowJs": true,
     "noUnusedLocals": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noImplicitAny": true,
     "skipLibCheck": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "declaration": true,
+    "sourceMap": true
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "lib","coverage"]
+  "exclude": ["node_modules", "lib", "coverage"]
 }

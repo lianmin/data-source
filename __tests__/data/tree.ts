@@ -10,16 +10,6 @@ export default [
           {
             label: '1-1-1',
             value: '1-1-1',
-            children: [
-              {
-                value: 'xx',
-                children: [
-                  {
-                    value: [1],
-                  },
-                ],
-              },
-            ],
           },
           {
             label: '1-1-2',
@@ -62,6 +52,18 @@ export default [
           {
             label: '2-1-2',
             value: '2-1-2',
+            children: [
+              {
+                label: '2-1-2-1',
+                value: '2-1-2-1',
+                children: [
+                  {
+                    label: '2-1-2-1-1',
+                    value: '2-1-2-1-1',
+                  },
+                ],
+              },
+            ],
           },
         ],
       },

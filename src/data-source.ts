@@ -1,336 +1,358 @@
+import Tree, { TreeNode } from '@xtree/tree';
 import { IDataItem, IDataSource } from './typings';
-import Node from './node';
 
 interface DataSourceConfig {
   /**
    * 自定义的 value 属性名
    */
-  valuePropName: string;
+  valuePropName?: string;
   /**
    * 自定义的孩子节点属性名
    */
-  childrenPropName: string;
+  childrenPropName?: string;
 }
 
-type CompareCallback = (node: IDataItem) => boolean;
-type TraverseCallbackType = (node: Node) => void;
+type TraverseCallbackFn<T> = (
+  data: T,
+  depth: number,
+  cancel: () => void,
+) => void;
+type PredicateFn<T> = (data: T, depth: number) => boolean;
 
-export default class DataSource<T> {
-  private readonly valuePropName: string;
-  private readonly childrenPropName: string;
-  private readonly root: any;
+export default class DataSource<T extends { [key: string]: any }> {
+  private tree = new Tree();
+  private root = this.tree.root;
+  private readonly valuePropName: string = 'value';
+  private readonly childrenPropName: string = 'children';
 
-  constructor(
-    data?: IDataSource | IDataItem,
-    config: DataSourceConfig = { valuePropName: 'value', childrenPropName: 'children' },
-  ) {
-    this.valuePropName = config.valuePropName;
-    this.childrenPropName = config.childrenPropName;
-
-    this.root = new Node('__ROOT__', { value: '__ROOT__' });
+  constructor(data?: T[] | DataSourceConfig) {
+    if (!data) return;
 
     if (Array.isArray(data)) {
-      // 节点数组
-      data.forEach((item) => {
-        this.insert(item, this.root);
-      });
-    } else if (data) {
-      // 单个节点数据
-      this.insert(data as IDataItem, this.root);
-    }
-  }
+      this.parse(data);
+    } else {
+      const { childrenPropName, valuePropName } = data;
 
-  /**
-   * 判断是否为空数据
-   */
-  isEmpty() {
-    return this.root.isLeaf;
-  }
-
-  /**
-   * 插入孩子节点
-   * @param data
-   * @param parentNode 父级节点； 若无，则默认添加给根节点
-   */
-  insert(data: IDataItem, parentNode?: Node): Node {
-    const newNode = this.parseToTree(data);
-    const pNode = parentNode || this.root;
-
-    newNode.parent = pNode;
-    pNode.children.push(newNode);
-
-    return newNode;
-  }
-
-  /**
-   * 移除节点
-   * @param node
-   * @returns
-   */
-  remove(node: Node) {
-    if (node.isRoot) {
-      console.warn('根节点无法移除');
-      return;
-    }
-
-    const parent = node.parent;
-    const index = parent.children.findIndex((n) => n === node);
-
-    parent.children.splice(index, 1);
-  }
-
-  /**
-   * 将数据转换为树状结构
-   * @param data
-   * @private
-   */
-  private parseToTree(data: any) {
-    const node = new Node(data[this.valuePropName], data);
-    const children = data[this.childrenPropName];
-
-    if (Array.isArray(children) && children.length > 0) {
-      children.forEach((child) => {
-        const _node = this.parseToTree(child);
-
-        _node.parent = node;
-
-        node.children.push(_node);
-      });
-    }
-
-    return node;
-  }
-
-  /**
-   * 查找
-   * @param value
-   */
-  find(value: any | CompareCallback): Node | null {
-    let result = null;
-
-    this.traverse((node) => {
-      if (typeof value === 'function') {
-        if (value(node) === true) {
-          result = node;
-        }
-      } else if (node.value === value) {
-        result = node;
+      if (valuePropName) {
+        this.valuePropName = valuePropName;
       }
-    });
-
-    return result;
-  }
-
-  /**
-   * 过滤每一个节点
-   * @param callback 仅当返回为 true 时，认为差孩子哦啊
-   */
-  filter(callback: CompareCallback) {
-    const result: Node[] = [];
-
-    this.traverse((node) => {
-      if (callback(node) === true) {
-        result.push(node);
-      }
-    });
-
-    return result;
-  }
-
-  /**
-   * 对所有树节点进行遍历，支持三种模式：
-   * 先序遍历、后序遍历、层级遍历
-   * @param callback
-   * @param strategy
-   */
-  traverse(callback: TraverseCallbackType, strategy?: 'pre' | 'post' | 'level'): void {
-    switch (strategy) {
-      case 'post':
-        this.postOrder(this.root, callback);
-        break;
-      case 'level':
-        this.levelOrder(this.root, callback);
-        break;
-      default:
-        this.preOrder(this.root, callback);
-    }
-  }
-
-  /**
-   * 先序遍历
-   * @param node
-   * @param callback
-   * @private
-   */
-  private preOrder(node: Node, callback: TraverseCallbackType) {
-    if (!node) {
-      return;
-    }
-
-    if (!node.isRoot) {
-      callback(node);
-    }
-
-    node.children.forEach((childNode) => this.preOrder(childNode, callback));
-  }
-
-  /**
-   * 后序遍历
-   * @param node
-   * @param callback
-   * @private
-   */
-  private postOrder(node: Node, callback: TraverseCallbackType) {
-    if (!node) {
-      return;
-    }
-
-    node.children.forEach((childNode) => this.postOrder(childNode, callback));
-
-    if (!node.isRoot) {
-      callback(node);
-    }
-  }
-
-  /**
-   * 层序遍历(广度优先)
-   * @param node
-   * @param callback
-   * @private
-   */
-  private levelOrder(node: Node, callback: TraverseCallbackType) {
-    const queue = [];
-    if (node) {
-      queue.push(node);
-    }
-
-    while (queue.length > 0) {
-      const curNode = queue.shift();
-
-      if (!curNode.isRoot) {
-        callback(curNode);
-      }
-
-      if (curNode.children.length > 0) {
-        queue.push(...curNode.children);
+      if (childrenPropName) {
+        this.childrenPropName = childrenPropName;
       }
     }
   }
 
   /**
-   * 获取节点的深度，不传则默认为构建的树或者森林的深度
-   * @param node
+   * 判断 dataSource 中是否无任何数据
    */
-  depth(node?: Node): number {
-    // todo: 还有些问题， node 和 root 的层级计算不准确
-    return this.calNodeDepth(node || this.root);
+  get isEmpty() {
+    return this.size === 0;
   }
 
   /**
-   * 计算指定节点的深度
-   * @param node
-   * @private
+   * 返回 DataSource 的所有节点数量
    */
-  private calNodeDepth(node: Node): number {
-    if (!node) {
+  get size(): number {
+    if (this.root.isLeaf) {
       return 0;
     }
 
-    const arr = node.children.map((childNode) => this.depth(childNode) + 1);
-
-    return arr.length > 0 ? Math.max(...arr) : 0;
+    return this.tree.size(this.root.left);
   }
 
   /**
-   * 获取节点的父级节点
-   * @param node
+   * 获取指定 value 所在节点的树的深度
+   * @param value
    */
-  parents(node: Node): Node[] {
+  depth(value?: any) {
+    if (!value) {
+      return 0;
+    }
+
+    const node = this.tree.find(value);
+    return this.tree.depth(node);
+  }
+
+  /**
+   * 解析树状数据
+   * @param data
+   */
+  parse(data: T[]) {
+    const newData = data.map((it) => this.toDataItem(it));
+    const nodes = this.tree.parseDataToNodes(newData as IDataSource);
+
+    this.tree.clear();
+
+    nodes.forEach((node) => this.tree.insertChild(node, this.root, 'trailing'));
+  }
+
+  private toDataItem(item: T) {
+    if (typeof item?.[this.valuePropName] === 'undefined') {
+      return {};
+    }
+
+    const rs: IDataItem = {
+      ...item,
+      value: item?.[this.valuePropName],
+    };
+
+    const children = (item?.[this.childrenPropName] || []).map((it: T) =>
+      this.toDataItem(it),
+    );
+
+    if (Array.isArray(children) && children.length) {
+      rs.children = children;
+    }
+
+    return rs as IDataItem;
+  }
+
+  /**
+   * 遍历整个树节点
+   * @param callback
+   */
+  traverse(callback: TraverseCallbackFn<T>, first?: 'depth' | 'breadth') {
+    this.tree.traverse((node: TreeNode, cancel) => {
+      const { originalData } = node;
+
+      callback(originalData, this.tree.depth(node), cancel);
+    }, first);
+  }
+
+  /**
+   * 查找指定值的节点
+   * @param value
+   */
+  find(value: PredicateFn<T> | any): T | undefined {
+    if (!value) {
+      return undefined;
+    }
+
+    const node = this.tree.find((node: TreeNode) => {
+      if (typeof value !== 'function') {
+        return node.value === value;
+      }
+      return value(this.transform(node) as T, this.tree.depth(node));
+    });
+
+    return this.transform(node);
+  }
+
+  /**
+   * 过滤指定值
+   * @param predicate
+   */
+  filter(predicate: PredicateFn<T>): T[] {
+    if (!predicate) {
+      return [];
+    }
+
+    const nodes = this.tree.filter((node) => {
+      return predicate(this.transform(node), this.tree.depth(node));
+    });
+
+    return nodes.map((node) => this.transform(node));
+  }
+
+  /**
+   * 获取指定值节点的兄弟节点数据
+   * @param value
+   * @param pos
+   */
+  siblings(value: any, pos: 'left' | 'right' | 'all' = 'all'): T[] {
+    if (!value) {
+      return [];
+    }
+
+    const node = this.tree.find(value);
+    const siblingNodes = this.tree.siblings(node, pos);
+
+    return siblingNodes.map(this.transform);
+  }
+
+  /**
+   * 返回指定值节点的所有孩子节点数据
+   * @param value
+   */
+  children(value?: any): T[] | undefined {
+    let node = !value ? this.root : this.tree.find(value);
+
+    if (!node) {
+      return undefined;
+    }
+
+    return this.tree.children(node).map((node) => this.transform(node));
+  }
+
+  /**
+   * 返回节点的所有组件节点(由近及远)
+   * @param value
+   */
+  parents(value: any): T[] {
+    if (!value) {
+      return [];
+    }
+
+    const node = this.tree.find(value);
+
     if (!node || node.isRoot) {
       return [];
     }
 
-    const queue = [];
-    let tmp = node.parent;
-
-    while (tmp && !tmp.isRoot) {
-      queue.push(tmp);
-      tmp = tmp.parent;
-    }
-
-    return queue;
+    return this.tree
+      .parents(node)
+      .filter((node) => !node.isRoot)
+      .map(this.transform);
   }
 
   /**
-   * 获取节点的兄弟节点
-   * @param node
-   * @param pos 兄弟节点的位置
-   * @returns
+   * 为指定值的节点插入新的孩子节点数据
+   * @param data
+   * @param parentValue
+   * @param pos
    */
-  siblings(node: Node, pos?: 'all' | 'left' | 'right'): Node[] {
-    if (!node) return [];
+  insertChild(
+    data: T,
+    parentValue?: any,
+    pos: 'leading' | 'trailing' = 'leading',
+  ): boolean {
+    const parentNode = parentValue ? this.tree.find(parentValue) : this.root;
 
-    const children = node.parent.children;
-    const index = children.findIndex((n) => n === node);
-    const leftSiblingNodes = children.slice(0, index);
-    const rightSiblingNodes = children.slice(index + 1);
-
-    switch (pos) {
-      case 'right':
-        return rightSiblingNodes;
-      case 'left':
-        return leftSiblingNodes;
-      default:
-        return [...leftSiblingNodes, ...rightSiblingNodes];
+    if (!data || !parentNode) {
+      return false;
     }
+
+    // @ts-ignore
+    const newNode = new TreeNode(data[this.valuePropName], data);
+
+    this.tree.insertChild(newNode, parentNode, pos);
+
+    return true;
   }
 
   /**
-   * 第一个左叶子结点
+   * 在指定值的节点之前插入新节点
+   * @param data
+   * @param siblingNodeValue
    */
-  firstLeaf(): Node | null {
-    if (this.root.isLeaf) {
-      // 无传入数据，则为空
-      return null;
+  insertBefore(data: T, siblingNodeValue: any): boolean {
+    const siblingNode = this.tree.find(siblingNodeValue);
+
+    if (!siblingNode) {
+      return false;
     }
 
-    let node = this.root.children[0];
+    // @ts-ignore
+    const newNode = new TreeNode(data[this.valuePropName], data);
+    this.tree.insertBefore(newNode, siblingNode);
 
-    while (!node.isLeaf) {
-      node = node.children[0];
-    }
-
-    return node;
+    return false;
   }
 
   /**
-   * 转化为标准 DataSource 格式数据
+   * 在指定值的接地啊年之后插入新节点
+   * @param data
+   * @param siblingNodeValue
    */
-  toData(node?: Node): IDataItem | IDataSource {
-    if (!node) {
-      // 对 root 转换的时候，移除虚拟 root 节点
-      return this._toData(this.root).children || [];
+  insertAfter(data: T, siblingNodeValue: any): boolean {
+    const siblingNode = this.tree.find(siblingNodeValue);
+
+    if (!siblingNode) {
+      return false;
     }
 
-    return this._toData(node);
+    // @ts-ignore
+    const newNode = new TreeNode(data[this.valuePropName], data);
+    this.tree.insertAfter(newNode, siblingNode);
+    return false;
   }
 
   /**
-   * 将节点的数据转换为数组
+   * 转换树的节点数据，为 DataSource 可以输出的节点数据
    * @param node
    * @private
    */
-  private _toData(node: Node): IDataItem {
-    let result = {
-      ...node.data,
-    };
+  private transform(node: TreeNode) {
+    if (node) {
+      return {
+        ...node.originalData,
+      };
+    }
+  }
 
-    if (node.children.length > 0) {
-      result.children = node.children.map((n) => {
-        return this._toData(n);
-      });
+  /**
+   * 移除指定值的节点
+   * @param value
+   */
+  remove(value: any): boolean {
+    // todo: isNil
+    if (!value) {
+      return false;
     }
 
-    return result;
+    // 特殊情况处理，如果传入了根节点值，则清空树
+    if (value === TreeNode.ROOT_VALUE) {
+      this.clear();
+      return true;
+    }
+
+    const node = this.tree.find(value);
+
+    if (node) {
+      this.tree.remove(node);
+      return true;
+    }
+
+    return true;
+  }
+
+  /**
+   * 清空树
+   */
+  clear() {
+    this.tree.clear();
+  }
+
+  /**
+   * 以指定的树状结构输出
+   */
+  toData(): T[] {
+    const data = this.tree.toData();
+
+    return data.map((it: any) => this.transformData(it));
+  }
+
+  private transformData(data: any): T {
+    const { value, children, ...others } = data;
+    const rs = {
+      [this.valuePropName]: value,
+    };
+
+    if (children) {
+      rs[this.childrenPropName] = data.children.map((d: any) =>
+        this.transformData(d),
+      );
+    }
+
+    return { ...others, ...rs };
+  }
+
+  /**
+   * 将 DataSource 对象上所有的树形结构的扁平化数据
+   * @param parentPropName
+   */
+  flatten<K>(parentPropName: string = 'parentValue'): Array<K & T> {
+    const items = this.tree.flatten(this.root, parentPropName);
+
+    return items.map((item: any) => {
+      const { value, children, parentValue, ...others } = item;
+
+      return {
+        [this.valuePropName]: value,
+        [parentPropName]:
+          parentValue === TreeNode.ROOT_VALUE ? undefined : parentValue,
+        ...others,
+      };
+    });
   }
 }
