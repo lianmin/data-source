@@ -9,7 +9,7 @@
     "dist"
   ],
   "main": "esm/index.js",
-  "module": "esm/index.js",
+  "module": "es2017/index.js",
   "types": "es2017/index.d.ts",
   "exports": {
     ".": {
@@ -18,8 +18,8 @@
         "default": "./es2017/index.js"
       },
       "default": {
-        "types": "./es2017/index.d.ts",
-        "default": "./es2017/index.js"
+        "types": "./esm/index.d.ts",
+        "default": "./esm/index.js"
       }
     },
     "./*": "./*"
