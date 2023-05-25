@@ -1,6 +1,6 @@
 {
   "name": "@xtree/data-source",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "description": "DataSource 的树状数据结构常用操作",
   "files": [
     "esm",
@@ -8,23 +8,18 @@
     "cjs",
     "dist"
   ],
-  "main": "esm/index.js",
-  "module": "es2017/index.js",
   "types": "es2017/index.d.ts",
+  "module": "esm/index.js",
   "exports": {
     ".": {
-      "es2017": {
-        "types": "./es2017/index.d.ts",
-        "default": "./es2017/index.js"
-      },
-      "default": {
-        "types": "./esm/index.d.ts",
-        "default": "./esm/index.js"
-      }
+      "import": "./esm/index.js",
+      "es2017": "./es2017/index.js"
     },
     "./*": "./*"
   },
-  "sideEffects": false,
+  "sideEffects": [
+    "dist/*"
+  ],
   "scripts": {
     "start": "ice-pkg start",
     "build": "ice-pkg build",
@@ -40,7 +35,7 @@
     "library"
   ],
   "dependencies": {
-    "@swc/helpers": "^0.5.0",
+    "@swc/helpers": "^0.5.1",
     "@xtree/tree": "^0.2.2"
   },
   "devDependencies": {
