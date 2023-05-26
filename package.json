@@ -1,28 +1,22 @@
 {
   "name": "@xtree/data-source",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0",
   "description": "DataSource 的树状数据结构常用操作",
   "files": [
-    "esm",
-    "es2017",
-    "cjs",
-    "dist"
+    "es"
   ],
-  "types": "es2017/index.d.ts",
-  "module": "esm/index.js",
+  "main": "./es/index.js",
+  "module": "./es/index.js",
+  "types": "./es/index.d.ts",
   "exports": {
-    ".": {
-      "import": "./esm/index.js",
-      "es2017": "./es2017/index.js"
-    },
-    "./*": "./*"
+    ".": "./es/index.js",
+    "./*": "./es/*"
   },
   "sideEffects": [
     "dist/*"
   ],
   "scripts": {
-    "start": "ice-pkg start",
-    "build": "ice-pkg build",
+    "build": "tsc",
     "prepublishOnly": "npm run build",
     "eslint": "eslint --cache --ext .js,.jsx,.ts,.tsx ./",
     "eslint:fix": "npm run eslint -- --fix",
@@ -35,13 +29,13 @@
     "library"
   ],
   "dependencies": {
-    "@swc/helpers": "^0.5.1",
-    "@xtree/tree": "^0.2.2"
+    "@xtree/tree": "^0.3.0"
   },
   "devDependencies": {
     "@applint/spec": "^1.2.3",
-    "@ice/pkg": "^1.5.7",
+    "@ice/pkg": "^1.5.8",
     "@jest/types": "^29.5.0",
+    "@swc/helpers": "^0.5.1",
     "@swc/jest": "^0.2.26",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",

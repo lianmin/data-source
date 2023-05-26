@@ -14,11 +14,7 @@ interface DataSourceConfig {
   childrenPropName?: string;
 }
 
-type TraverseCallbackFn<T> = (
-  data: T,
-  depth: number,
-  cancel: () => void,
-) => void;
+type TraverseCallbackFn<T> = (data: T, depth: number, cancel: () => void) => void;
 type PredicateFn<T> = (data: T, depth: number) => boolean;
 
 export default class DataSource<T = IDataItem> {
@@ -98,9 +94,7 @@ export default class DataSource<T = IDataItem> {
       value: item?.[this.valuePropName],
     };
 
-    const children = (item?.[this.childrenPropName] || []).map((it: T) =>
-      this.toDataItem(it),
-    );
+    const children = (item?.[this.childrenPropName] || []).map((it: T) => this.toDataItem(it));
 
     if (Array.isArray(children) && children.length) {
       rs.children = children;
@@ -214,11 +208,7 @@ export default class DataSource<T = IDataItem> {
    * @param parentValue
    * @param pos
    */
-  insertChild(
-    data: T,
-    parentValue?: any,
-    pos: 'leading' | 'trailing' = 'trailing',
-  ): boolean {
+  insertChild(data: T, parentValue?: any, pos: 'leading' | 'trailing' = 'trailing'): boolean {
     const parentNode = parentValue ? this.tree.find(parentValue) : this.root;
 
     if (!data || !parentNode) {
@@ -331,9 +321,7 @@ export default class DataSource<T = IDataItem> {
     };
 
     if (children) {
-      rs[this.childrenPropName] = data.children.map((d: any) =>
-        this.transformData(d),
-      );
+      rs[this.childrenPropName] = data.children.map((d: any) => this.transformData(d));
     }
 
     return { ...others, ...rs };
@@ -351,8 +339,7 @@ export default class DataSource<T = IDataItem> {
 
       return {
         [this.valuePropName]: value,
-        [parentPropName]:
-          parentValue === TreeNode.ROOT_VALUE ? undefined : parentValue,
+        [parentPropName]: parentValue === TreeNode.ROOT_VALUE ? undefined : parentValue,
         ...others,
       };
     });

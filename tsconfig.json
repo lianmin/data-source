@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es6",
+    "module": "esnext",
+    "target": "esnext",
     "jsx": "preserve",
     "moduleResolution": "node",
-    "lib": ["ES2017"],
+    "lib": ["ESNext", "es6"],
     "allowJs": true,
+    "types": [],
     "noUnusedLocals": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
@@ -13,7 +14,9 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "declaration": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "outDir": "es/"
   },
+  "include": ["./src"],
   "exclude": ["node_modules", "lib", "coverage"]
 }

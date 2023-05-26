@@ -669,7 +669,7 @@
   dependencies:
     style-unit "^3.0.4"
 
-"@ice/pkg@^1.5.7":
+"@ice/pkg@^1.5.8":
   version "1.5.8"
   resolved "https://registry.npmjs.org/@ice/pkg/-/pkg-1.5.8.tgz#3f862b059ac4a2f0b8bf7b7db7eb2a336dcdc1ce"
   integrity sha512-Hqw8N88mlTbqz562rJ0XXfiMJLHLdmUTXNjkrEnDkHwjPMoIOvcXXljuvHiI3uVtxhWl+H05KEHqmOVgtvWMkA==
@@ -1527,10 +1527,10 @@
   resolved "https://registry.npmjs.org/@uni/env/-/env-1.1.1.tgz#e66825f38aafccfba7bd2f4760e0e96b3570d9d9"
   integrity sha512-oQGRQg3cFVb6ByppV0WVue/BE98cw0xvAniX9L0wQtzU94RvZg9/GpkFIDwrlgcvzXlTgUPTTMG9B/riiiFQyQ==
 
-"@xtree/tree@^0.2.2":
-  version "0.2.2"
-  resolved "https://registry.npmjs.org/@xtree/tree/-/tree-0.2.2.tgz#0302140051722a5dc8e8c9e6780b79743c5389cb"
-  integrity sha512-/HjQhrzqXexNGW8McM4VW8G3RPGOJC/tpR0W1JhN0rdgUgL/aTylEqxO80jDCP1GooTO8d8y22jpvWRl5Dvq6g==
+"@xtree/tree@^0.3.0":
+  version "0.3.1"
+  resolved "https://registry.npmjs.org/@xtree/tree/-/tree-0.3.1.tgz#c6fe2422bd3a95bc814a82b3c1c97b8bdd679dfb"
+  integrity sha512-ALZqw4RfkaPRTB4E3ANwntaMu/JbMMV/k55cPF4xViO54unRkHTtHDFQ+fEVylINsbXRUlzwg03l0Us/TKox0Q==
   dependencies:
     "@ice/jsx-runtime" "^0.2.0"
     "@swc/helpers" "^0.5.1"

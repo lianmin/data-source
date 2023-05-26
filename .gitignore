@@ -8,6 +8,7 @@ tmp/
 cjs/
 esm/
 es2017/
+es/
 
 coverage/
 
