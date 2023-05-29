@@ -8,7 +8,7 @@ type DataItemType = {
   children?: DataItemType[];
 };
 
-const genTree = () => {
+const genDs = () => {
   const ds = new DataSource<DataItemType>();
   ds.parse(treeData);
   return ds;
@@ -48,7 +48,7 @@ describe('创建', () => {
   });
 
   test('尺寸', () => {
-    const ds = genTree();
+    const ds = genDs();
     const size = ds.size;
 
     expect(size).toBe(20);

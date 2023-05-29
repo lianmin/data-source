@@ -29,7 +29,7 @@
     "library"
   ],
   "dependencies": {
-    "@xtree/tree": "^0.3.0"
+    "@xtree/tree": "^0.3.2"
   },
   "devDependencies": {
     "@applint/spec": "^1.2.3",
@@ -47,7 +47,9 @@
     "prettier": "^2.8.8",
     "ts-jest": "^29.1.0",
     "ts-node": "^10.9.1",
-    "tslib": "^2.5.2"
+    "tslib": "^2.5.2",
+    "typedoc": "^0.24.7",
+    "typedoc-plugin-markdown": "^3.15.3"
   },
   "publishConfig": {
     "access": "public"

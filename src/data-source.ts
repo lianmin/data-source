@@ -14,7 +14,11 @@ interface DataSourceConfig {
   childrenPropName?: string;
 }
 
-type TraverseCallbackFn<T> = (data: T, depth: number, cancel: () => void) => void;
+type TraverseCallbackFn<T> = (
+  data: T,
+  depth: number,
+  cancel: () => void,
+) => void;
 type PredicateFn<T> = (data: T, depth: number) => boolean;
 
 export default class DataSource<T = IDataItem> {
@@ -76,31 +80,45 @@ export default class DataSource<T = IDataItem> {
    * @param data
    */
   parse(data: T[]) {
-    const newData = data.map((it) => this.toDataItem(it));
-    const nodes = this.tree.parseDataToNodes(newData as IDataSource);
+    const nodes = data.map((item) => this.parseDataToNode(item));
 
     this.tree.clear();
 
-    nodes.forEach((node) => this.tree.insertChild(node, this.root, 'trailing'));
+    nodes
+      .filter((node) => !!node)
+      .forEach((node) => this.tree.insertChild(node, this.root, 'trailing'));
   }
 
-  private toDataItem(item: T | any) {
-    if (typeof item?.[this.valuePropName] === 'undefined') {
-      return {};
+  /**
+   * 树形数据转换成二叉树
+   * @param data 树形结构数据
+   */
+  parseDataToNode(data: any): TreeNode | undefined {
+    if (!data?.[this.valuePropName]) {
+      return undefined;
     }
 
-    const rs: IDataItem = {
-      ...item,
-      value: item?.[this.valuePropName],
-    };
+    const node = new TreeNode(data[this.valuePropName], data);
 
-    const children = (item?.[this.childrenPropName] || []).map((it: T) => this.toDataItem(it));
+    if (
+      Array.isArray(data?.[this.childrenPropName]) &&
+      data[this.childrenPropName]?.length > 0
+    ) {
+      let leftNode = this.parseDataToNode(data[this.childrenPropName][0]);
+      node.left = leftNode;
+      leftNode.parent = node;
 
-    if (Array.isArray(children) && children.length) {
-      rs.children = children;
+      let cur = leftNode;
+
+      for (let i = 1; i < data[this.childrenPropName].length; i++) {
+        let rightNode = this.parseDataToNode(data[this.childrenPropName][i]);
+        cur.right = rightNode;
+        rightNode.parent = node;
+        cur = rightNode;
+      }
     }
 
-    return rs as IDataItem;
+    return node;
   }
 
   /**
@@ -208,7 +226,11 @@ export default class DataSource<T = IDataItem> {
    * @param parentValue
    * @param pos
    */
-  insertChild(data: T, parentValue?: any, pos: 'leading' | 'trailing' = 'trailing'): boolean {
+  insertChild(
+    data: T,
+    parentValue?: any,
+    pos: 'leading' | 'trailing' = 'trailing',
+  ): boolean {
     const parentNode = parentValue ? this.tree.find(parentValue) : this.root;
 
     if (!data || !parentNode) {
@@ -308,23 +330,49 @@ export default class DataSource<T = IDataItem> {
   /**
    * 以指定的树状结构输出
    */
-  toData(): T[] {
+  toData() {
     const data = this.tree.toData();
 
-    return data.map((it: any) => this.transformData(it));
+    return data.map((it: any) => this._toData(it));
   }
 
-  private transformData(data: any): T {
-    const { value, children, ...others } = data;
+  private _toData(data: any): { [key: string]: any } {
+    const { value, children, originalData } = data;
     const rs = {
       [this.valuePropName]: value,
     };
 
     if (children) {
-      rs[this.childrenPropName] = data.children.map((d: any) => this.transformData(d));
+      rs[this.childrenPropName] = data.children.map((d: any) =>
+        this._toData(d),
+      );
     }
 
-    return { ...others, ...rs };
+    return {
+      ...originalData,
+      ...rs,
+    };
+  }
+
+  /**
+   * 以标准的 DataSource 数据类型返回
+   * 形如：[{value:string, children:[...]}]
+   * 对当前的树形数据执行格式化输出
+   */
+  toDataSource(): IDataSource {
+    const data = this.tree.toData();
+
+    return data.map((it: any) => this._toDataSource(it));
+  }
+
+  private _toDataSource(data: any): IDataItem {
+    const { value, children, originalData } = data;
+
+    return {
+      originalData,
+      value,
+      ...(children ? { children } : null),
+    };
   }
 
   /**
@@ -339,7 +387,8 @@ export default class DataSource<T = IDataItem> {
 
       return {
         [this.valuePropName]: value,
-        [parentPropName]: parentValue === TreeNode.ROOT_VALUE ? undefined : parentValue,
+        [parentPropName]:
+          parentValue === TreeNode.ROOT_VALUE ? undefined : parentValue,
         ...others,
       };
     });

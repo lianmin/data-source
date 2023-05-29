@@ -6,7 +6,6 @@
     "moduleResolution": "node",
     "lib": ["ESNext", "es6"],
     "allowJs": true,
-    "types": [],
     "noUnusedLocals": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,

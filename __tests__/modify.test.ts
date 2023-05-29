@@ -8,7 +8,7 @@ interface DataItemType {
   [key: string]: any;
 }
 
-const genTree = () => {
+const genDs = () => {
   const ds = new DataSource<DataItemType>({
     valuePropName: 'code',
     childrenPropName: 'children',
@@ -19,7 +19,7 @@ const genTree = () => {
 
 describe('查找和遍历', () => {
   test('指定节点前插入', () => {
-    const ds = genTree();
+    const ds = genDs();
     // 浙江省的城市
     const cities = ds.children('33');
 
@@ -44,7 +44,7 @@ describe('查找和遍历', () => {
   });
 
   test('指定节点后插入', () => {
-    const ds = genTree();
+    const ds = genDs();
     // 浙江省的城市
     const cities = ds.children('33');
 
@@ -69,7 +69,7 @@ describe('查找和遍历', () => {
   });
 
   test('作为为首个孩子节点插入', () => {
-    const ds = genTree();
+    const ds = genDs();
     // 浙江省的城市
     const cities = ds.children('33');
 
@@ -98,7 +98,7 @@ describe('查找和遍历', () => {
     expect(insertResult).toBe(false);
   });
   test('作为最后一个孩子节点插入', () => {
-    const ds = genTree();
+    const ds = genDs();
     // 浙江省的城市
     const cities = ds.children('33');
 
@@ -117,7 +117,7 @@ describe('查找和遍历', () => {
   });
 
   test('移除指定节点', () => {
-    const ds = genTree();
+    const ds = genDs();
 
     // 无效的
     ds.remove('');
@@ -142,7 +142,7 @@ describe('查找和遍历', () => {
   });
 
   test('清空数据', () => {
-    const ds = genTree();
+    const ds = genDs();
 
     expect(ds.size).not.toBe(0);
 
