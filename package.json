@@ -29,7 +29,7 @@
     "library"
   ],
   "dependencies": {
-    "@xtree/tree": "^0.3.2"
+    "@xtree/tree": "0.3.4"
   },
   "devDependencies": {
     "@applint/spec": "^1.2.3",

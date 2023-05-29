@@ -328,30 +328,29 @@ export default class DataSource<T = IDataItem> {
   }
 
   /**
-   * 以指定的树状结构输出
+   * 以原有的树状结构输出
    */
   toData() {
-    const data = this.tree.toData();
-
-    return data.map((it: any) => this._toData(it));
+    return this.tree.format((data) => {
+      const { value, children, originalData } = data;
+      return {
+        ...originalData,
+        [this.valuePropName]: value,
+        [this.childrenPropName]: children,
+      };
+    });
   }
 
-  private _toData(data: any): { [key: string]: any } {
-    const { value, children, originalData } = data;
-    const rs = {
-      [this.valuePropName]: value,
-    };
-
-    if (children) {
-      rs[this.childrenPropName] = data.children.map((d: any) =>
-        this._toData(d),
-      );
-    }
-
-    return {
-      ...originalData,
-      ...rs,
-    };
+  /**
+   * 自定义返回格式
+   * @param callback
+   */
+  format(
+    callback: (
+      data: IDataItem & { originalData: { [key: string]: any } },
+    ) => any,
+  ) {
+    return this.tree.format(callback);
   }
 
   /**
@@ -360,19 +359,7 @@ export default class DataSource<T = IDataItem> {
    * 对当前的树形数据执行格式化输出
    */
   toDataSource(): IDataSource {
-    const data = this.tree.toData();
-
-    return data.map((it: any) => this._toDataSource(it));
-  }
-
-  private _toDataSource(data: any): IDataItem {
-    const { value, children, originalData } = data;
-
-    return {
-      originalData,
-      value,
-      ...(children ? { children } : null),
-    };
+    return this.tree.format((data) => data);
   }
 
   /**

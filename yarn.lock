@@ -458,7 +458,7 @@
     "@babel/plugin-transform-modules-commonjs" "^7.21.5"
     "@babel/plugin-transform-typescript" "^7.21.3"
 
-"@babel/runtime@^7.12.5", "@babel/runtime@^7.14.6", "@babel/runtime@^7.20.7", "@babel/runtime@^7.9.2":
+"@babel/runtime@^7.12.5", "@babel/runtime@^7.20.7", "@babel/runtime@^7.9.2":
   version "7.22.3"
   resolved "https://registry.npmjs.org/@babel/runtime/-/runtime-7.22.3.tgz#0a7fce51d43adbf0f7b517a71f4c3aaca92ebcbb"
   integrity sha512-XsDuspWKLUsxwCp6r7EhsExHtYfbe5oAGQ19kqngTdCPUoPQzOPdUbD/pB9PJiwb2ptYKQDjSJT3R6dC+EPqfQ==
@@ -661,13 +661,6 @@
   version "1.2.1"
   resolved "https://registry.npmjs.org/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
-
-"@ice/jsx-runtime@^0.2.0":
-  version "0.2.1"
-  resolved "https://registry.npmjs.org/@ice/jsx-runtime/-/jsx-runtime-0.2.1.tgz#87a71b84a572850aa7ed3629b9437571edb999dc"
-  integrity sha512-X+IMfhmrfAFSA1Kh0fCr3+xJKRR048uljfB8zBIzoQyEf8MEkifUHtoS8UXQPp8fjyPCyt1hKXzAvz+LTLgO5g==
-  dependencies:
-    style-unit "^3.0.4"
 
 "@ice/pkg@^1.5.8":
   version "1.5.8"
@@ -1522,18 +1515,10 @@
     "@typescript-eslint/types" "5.59.7"
     eslint-visitor-keys "^3.3.0"
 
-"@uni/env@^1.0.0":
-  version "1.1.1"
-  resolved "https://registry.npmjs.org/@uni/env/-/env-1.1.1.tgz#e66825f38aafccfba7bd2f4760e0e96b3570d9d9"
-  integrity sha512-oQGRQg3cFVb6ByppV0WVue/BE98cw0xvAniX9L0wQtzU94RvZg9/GpkFIDwrlgcvzXlTgUPTTMG9B/riiiFQyQ==
-
-"@xtree/tree@^0.3.2":
-  version "0.3.2"
-  resolved "https://registry.npmjs.org/@xtree/tree/-/tree-0.3.2.tgz#54098a78eb98cb5b2abda78d6049a9bde9ee0d33"
-  integrity sha512-7Qzt0V8P9u9YZgo9U5zmxaKknYLB1KWRXt4/1+oPBzh0m6tJ8cTBgOhtISDNUKanpXiIGIqsQwtiy+AuopiTzQ==
-  dependencies:
-    "@ice/jsx-runtime" "^0.2.0"
-    "@swc/helpers" "^0.5.1"
+"@xtree/tree@0.3.4":
+  version "0.3.4"
+  resolved "https://registry.npmjs.org/@xtree/tree/-/tree-0.3.4.tgz#395e9762f3c3794a74e2f60695aa5a4d70b2d527"
+  integrity sha512-X2bP07hSFJ74VSCJGMaUZN3cVqr0oP593TcVHzOJ7S53GS+xQHC4KZjAHDzcMl/y9p1LC3D2W/Ztc+hyr78yVw==
 
 abab@^2.0.6:
   version "2.0.6"
@@ -5804,14 +5789,6 @@ strip-json-comments@^3.1.0, strip-json-comments@^3.1.1:
   resolved "https://registry.npmjs.org/strip-json-comments/-/strip-json-comments-3.1.1.tgz#31f1281b3832630434831c310c01cccda8cbe006"
   integrity sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==
 
-style-unit@^3.0.4:
-  version "3.0.5"
-  resolved "https://registry.npmjs.org/style-unit/-/style-unit-3.0.5.tgz#a10207bab2406019ce4d9c6c2e5ed8640f1e3848"
-  integrity sha512-xL+kev1W1dPthdhpQqZs9Qk1zenQiHKyy9oy2/VasW4z6wi7m7qQvMe67foPsr99JSs0115X0TCN1ch1n0XqSw==
-  dependencies:
-    "@babel/runtime" "^7.14.6"
-    universal-env "^3.0.0"
-
 stylehacks@^5.1.1:
   version "5.1.1"
   resolved "https://registry.npmjs.org/stylehacks/-/stylehacks-5.1.1.tgz#7934a34eb59d7152149fa69d6e9e56f2fc34bcc9"
@@ -6081,13 +6058,6 @@ unbox-primitive@^1.0.2:
     has-bigints "^1.0.2"
     has-symbols "^1.0.3"
     which-boxed-primitive "^1.0.2"
-
-universal-env@^3.0.0:
-  version "3.3.3"
-  resolved "https://registry.npmjs.org/universal-env/-/universal-env-3.3.3.tgz#adb1bf6a3885d99efe78ab969f9dc54c39b3ebe4"
-  integrity sha512-4ZyITvWhtcurCEA66Cb7jcd4zpEiAAo91wSwbEscbiu033pIsC2yjgT8LYyasFgsst6jZHD1gtVoSyYcL8oH1Q==
-  dependencies:
-    "@uni/env" "^1.0.0"
 
 universalify@^0.1.0:
   version "0.1.2"

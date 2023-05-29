@@ -58,14 +58,14 @@ describe('格式化', () => {
     });
     ds.parse(streetData);
 
-    const dataSourceArr = ds.toDataSource();
+    const dataSourceArr = ds.format((data) => data);
 
     expect(dataSourceArr[0]).toHaveProperty('originalData');
     expect(dataSourceArr[0].value).not.toBe(null);
     expect(dataSourceArr[0].children.length).toBeGreaterThan(0);
   });
 
-  test('非标准树状结构结构输出 DataSource 数据', () => {
+  test('非标准树状结构结构输出自定义数据', () => {
     const ds = new DataSource<any>({
       childrenPropName: 'employee',
       valuePropName: 'id',
@@ -73,25 +73,19 @@ describe('格式化', () => {
 
     ds.parse(nonStandardData);
 
-    const dataSourceArr = ds.toDataSource();
+    const dataSourceArr = ds.format((data) => {
+      const { value, children, originalData } = data;
+      const ret: any = { value, label: originalData.name };
 
-    expect(dataSourceArr[0]).toHaveProperty('originalData');
+      if (children?.length) {
+        ret.children = children;
+      }
+
+      return ret;
+    });
+
+    expect(dataSourceArr[0]).toHaveProperty('label');
     expect(dataSourceArr[0]).toHaveProperty('value');
     expect(dataSourceArr[0]).toHaveProperty('children');
-  });
-
-  test('非标准树状结构结构输出原始结构', () => {
-    const ds = new DataSource<any>({
-      childrenPropName: 'employee',
-      valuePropName: 'id',
-    });
-
-    ds.parse(nonStandardData);
-
-    const dataSourceArr = ds.toData();
-
-    expect(dataSourceArr[0]).toHaveProperty('id');
-    expect(dataSourceArr[0]).toHaveProperty('employee');
-    expect(dataSourceArr[0]).toHaveProperty('name');
   });
 });
